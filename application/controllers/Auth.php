@@ -155,24 +155,35 @@ class Auth extends CI_Controller
 			// display the form
 			// set the flash data error message if there is one
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-
+			$this->data['group'] = $group = $this->ion_auth_model->getGroup($_SESSION['user_id']);
+			$this->data['halaman'] = "ganti_password";
+			$this->data['title'] = "Ganti Password";
 			$this->data['min_password_length'] = $this->config->item('min_password_length', 'ion_auth');
 			$this->data['old_password'] = [
 				'name' => 'old',
 				'id' => 'old',
 				'type' => 'password',
+				'class' => 'form_control',
+				'placeholder' => "Kata Sandi Lama",
+				'required' => "required",
 			];
 			$this->data['new_password'] = [
 				'name' => 'new',
 				'id' => 'new',
 				'type' => 'password',
 				'pattern' => '^.{' . $this->data['min_password_length'] . '}.*$',
+				'class' => 'form_control',
+				'placeholder' => "Kata Sandi Baru",
+				'required' => "required",
 			];
 			$this->data['new_password_confirm'] = [
 				'name' => 'new_confirm',
 				'id' => 'new_confirm',
 				'type' => 'password',
 				'pattern' => '^.{' . $this->data['min_password_length'] . '}.*$',
+				'class' => 'form_control',
+				'placeholder' => "Ulangi Sandi Baru",
+				'required' => "required",
 			];
 			$this->data['user_id'] = [
 				'name' => 'user_id',
@@ -182,7 +193,9 @@ class Auth extends CI_Controller
 			];
 
 			// render
+			$this->_render_page('master' . DIRECTORY_SEPARATOR . 'header', $this->data);
 			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'change_password', $this->data);
+			$this->_render_page('master' . DIRECTORY_SEPARATOR . 'footer', $this->data);
 		} else {
 			$identity = $this->session->userdata('identity');
 

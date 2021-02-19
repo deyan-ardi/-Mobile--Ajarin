@@ -2,31 +2,14 @@
 <section id="home" class="section welcome-area bg-overlay d-flex">
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-12">
-                <!-- Contact Box -->
-                <div class="contact-box bg-white text-left rounded p-3 mt-lg-5 mt-3 shadow-lg">
-                    <!-- Contact Form -->
-                    <div class="text-right">
-                        <a href="#" data-toggle="modal" data-target="#modalKelas">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </a>
-                    </div>
-                    <a href="<?= base_url() ?>home/kelas/<?= $kelas[0]['id_kelas'] ?>">
-                        <h5 class="text-primary">[<?= $kelas[0]['kode_kelas'] ?>] - <?= $kelas[0]['nama_kelas'] ?></h5>
-                    </a>
-                    <p class="mt-2"><?= $kelas[0]['deskripsi'] ?></p>
-
-                    <p class="mt-4 pt-2"><?= $kelas[0]['created_by'] ?></p>
-
-                </div>
-            </div>
+            <?php $this->load->view('page/header-kelas') ?>
         </div>
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-12">
                 <!-- Contact Box -->
                 <div class="contact-box bg-white text-left rounded p-3 mt-4 shadow-lg">
                     <a
-                        href="<?= base_url() ?>home/tambah_materi/<?= $dataBab[0]['id_bab'] ?>/<?=$kelas[0]['id_kelas']?>">
+                        href="<?= base_url() ?>home/tambah_materi/<?= $dataBab[0]['id_bab'] ?>/<?= $kelas[0]['id_kelas'] ?>">
                         <h5 class="text-primary">Tambah Materi Pembelajaran</h5>
                     </a>
                     <form action="" method="post" class="mt-5">

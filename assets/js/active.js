@@ -294,7 +294,31 @@
             });
     });
     $('.modal').appendTo("body") 
-
+    $(document).ready( function () {
+        $('#myTable').DataTable();
+    });
+    $(document).ready(function () {
+        const success = $('.berhasil').data('berhasil');
+        if (success) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                text: 'Berhasil ' + success,
+                showConfirmButton: false,
+            })
+        }
+    });
+    $(document).ready(function () {
+        const gagal = $('.gagal').data('gagal');
+        if (gagal) {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                text: 'Opss.. Gagal ' + gagal,
+                showConfirmButton: false,
+            })
+        }
+    });
 }(jQuery));
 
 const searchKelas = () => {

@@ -1,15 +1,17 @@
 <!-- ***** Welcome Area Start ***** -->
-<section id="home" class="section welcome-area bg-overlay d-flex align-items-center">
+<section id="home" class="section welcome-area bg-overlay d-flex ">
     <div class="container">
-        <div class="row align-items-center justify-content-center">
+        <div class="row mt-lg-5 mb-5 justify-content-center">
             <div class="col-12 col-md-8 col-lg-5">
                 <!-- Contact Box -->
-                <div class="contact-box bg-white text-center rounded p-4 p-sm-5 mt-5 mt-lg-0 shadow-lg">
+                <div class="contact-box bg-white text-center rounded p-4 p-sm-5 mt-lg-0 shadow-lg">
                     <!-- Contact Form -->
 
                     <?php echo form_open('auth/login'); ?>
                     <div class="contact-top">
-                        <h3 class="contact-title mb-5">Masuk</h3>
+                        <img class="navbar-brand-regular" src="<?= base_url() ?>/assets/img/ajarin.png" width="150px"
+                            alt="brand-logo">
+                        <h4 class="contact-title mb-4 mt-2">Belajar Dengan VR Lebih Menyenangkan</h4>
                     </div>
                     <div id="infoMessage"><?php echo $message; ?></div>
                     <div class="row">

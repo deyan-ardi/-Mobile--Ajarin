@@ -9,7 +9,9 @@
 
 
                     <div class="contact-top">
-                        <h3 class="contact-title mb-5">AJAR.IN</h3>
+                        <img class="navbar-brand-regular" src="<?= base_url() ?>/assets/img/ajarin.png" width="150px"
+                            alt="brand-logo">
+                        <h4 class="contact-title mb-3 mt-2">Hai, Kamu Ingin Apa Hari Ini?</h4>
                     </div>
 
                     <div class="col-12">

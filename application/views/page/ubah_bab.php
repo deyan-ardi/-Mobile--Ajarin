@@ -2,44 +2,7 @@
 <section id="home" class="section welcome-area bg-overlay d-flex">
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-12">
-                <!-- Contact Box -->
-                <div class="contact-box bg-white text-left rounded p-3 mt-lg-5 mt-3 shadow-lg">
-                    <!-- Contact Form -->
-                    <div class="text-right">
-                        <a href="#" data-toggle="modal" data-target="#modalKelas">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </a>
-                    </div>
-                    <a href="<?= base_url() ?>home/kelas/<?= $kelas[0]['id_kelas'] ?>">
-                        <h5 class="text-primary">[<?= $kelas[0]['kode_kelas'] ?>] - <?= $kelas[0]['nama_kelas'] ?></h5>
-                    </a>
-                    <p class="mt-2"><?= $kelas[0]['deskripsi'] ?></p>
-
-                    <p class="mt-4 pt-2"><?= $kelas[0]['created_by'] ?></p>
-
-                </div>
-            </div>
-            <div class="modal fade" id="modalKelas" tabindex="-2" aria-labelledby="modalKelasLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="modal-title" id="exampleModalLabel">Menu Item</div>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <ul>
-                                <li> <a href="<?= base_url() ?>home/tambah_bab/<?= $kelas[0]['id_kelas'] ?>"><i
-                                            class="fas fa-plus-circle"></i>
-                                        Tambah
-                                        Bab Pembelajaran</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php $this->load->view('page/header-kelas') ?>
         </div>
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-12">

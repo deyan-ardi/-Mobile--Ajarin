@@ -24,9 +24,6 @@ class Home extends CI_Controller
 		if (!$this->ion_auth->logged_in()) {
 			$this->data['title'] = 'Beranda';
 			$this->data['halaman'] = 'beranda';
-			$id = $_SESSION['user_id'];
-			$group = $this->ion_auth_model->getGroup($id);
-			$this->data['group'] = $group;
 			$this->load->view('master/header', $this->data);
 			$this->load->view('index', $this->data);
 			$this->load->view('master/footer', $this->data);
@@ -42,11 +39,47 @@ class Home extends CI_Controller
 			$this->data['title'] = 'Beranda';
 			$this->data['halaman'] = 'dashboard';
 			$id = $_SESSION['user_id'];
+			$this->data['gabung'] = $this->All_model->getAllAnggota($id);
 			$group = $this->ion_auth_model->getGroup($id);
 			$this->data['group'] = $group;
 			$this->data['kelas'] = $this->All_model->getAllKelas();
 			$this->load->view('master/header', $this->data);
 			$this->load->view('page/index', $this->data);
+			$this->load->view('master/footer', $this->data);
+		}
+	}
+	public function kelas_saya()
+	{
+		if (!$this->ion_auth->logged_in()) {
+			redirect('/', 'refresh');
+		} else {
+			$this->data['title'] = 'Daftar Kelas Yang Diikuti';
+			$this->data['halaman'] = 'dashboard';
+			$id = $_SESSION['user_id'];
+			$this->data['gabung'] = $this->All_model->getAllAnggota($id);
+			$group = $this->ion_auth_model->getGroup($id);
+			$this->data['group'] = $group;
+			$this->data['kelas'] = $this->All_model->getAllKelasSaya($id);
+			$this->load->view('master/header', $this->data);
+			$this->load->view('page/kelas_saya', $this->data);
+			$this->load->view('master/footer', $this->data);
+		}
+	}
+	public function daftar_anggota($id_kelas = "")
+	{
+		if (!$this->ion_auth->logged_in()) {
+			redirect('/', 'refresh');
+		} else {
+			$this->data['title'] = 'Daftar Kelas';
+			$this->data['halaman'] = 'dashboard';
+			$id = $_SESSION['user_id'];
+			$this->data['gabung'] = $this->All_model->getAllAnggota($id);
+			$this->data['anggota'] = $this->All_model->getAllAnggotaKelas($id_kelas);
+			$group = $this->ion_auth_model->getGroup($id);
+			$this->data['group'] = $group;
+			$this->data['kelas'] = $this->All_model->getAllKelas();
+			$this->load->view('master/header', $this->data);
+			$this->load->view('page/daftar_kelas', $this->data);
 			$this->load->view('master/footer', $this->data);
 		}
 	}
@@ -62,6 +95,7 @@ class Home extends CI_Controller
 			$this->data['bab'] = $this->All_model->getAllBab($id_kelas);
 			$this->data['materi'] = $this->All_model->getAllMateri();
 			$group = $this->ion_auth_model->getGroup($id);
+			$this->data['gabung'] = $this->All_model->getGabungUser($id, $id_kelas);
 			$this->data['group'] = $group;
 			$this->load->view('master/header', $this->data);
 			$this->load->view('page/kelas', $this->data);
@@ -79,6 +113,7 @@ class Home extends CI_Controller
 			$this->data['kelas'] = $this->All_model->getKelasWhere($id_kelas);
 			$group = $this->ion_auth_model->getGroup($id);
 			$this->data['group'] = $group;
+			$this->data['gabung'] = $this->All_model->getGabungUser($id, $id_kelas);
 			$this->form_validation->set_rules('nama_bab', 'Nama Bab', 'required');
 			$this->form_validation->set_rules('deskripsi', 'Deskripsi Kelas', 'required|max_length[100]');
 
@@ -88,10 +123,52 @@ class Home extends CI_Controller
 				$this->load->view('master/footer', $this->data);
 			} else {
 				if($this->All_model->tambahBabKelas($id_kelas)){
-					echo "Berhasil";
-				}else{
-					echo "Gagal";
+					$this->session->set_flashdata('berhasil', 'Ditambahkan');
+					redirect('home/kelas/' . $id_kelas, "refresh");
+				} else {
+					$this->session->set_flashdata('gagal', 'Ditambahkan');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}
+			}
+		}
+	}
+	public function gabung_kelas($id_kelas)
+	{
+		if (!$this->ion_auth->logged_in()) {
+			redirect('/', 'refresh');
+		} else {
+			$id = $_SESSION['user_id'];
+			if ($this->All_model->getAnggotaWhere($id, $id_kelas) > 0) {
+				$this->session->set_flashdata('gagal', 'Gabung Kelas, Anda Sudah Bergabung Dikelas Ini');
+				redirect('home/kelas/' . $id_kelas, "refresh");
+			} else {
+				if ($this->All_model->gabungKelasUser($id_kelas, "Anggota")) {
+					$this->session->set_flashdata('berhasil', 'Bergabung');
+					redirect('home/kelas/' . $id_kelas, "refresh");
+				} else {
+					$this->session->set_flashdata('gagal', 'Bergabung');
+					redirect('home/kelas/' . $id_kelas, "refresh");
+				}
+			}
+		}
+	}
+	public function keluar_kelas($id_kelas)
+	{
+		if (!$this->ion_auth->logged_in()) {
+			redirect('/', 'refresh');
+		} else {
+			$id = $_SESSION['user_id'];
+			if ($this->All_model->getAnggotaWhere($id, $id_kelas) > 0) {
+				if ($this->All_model->keluarKelasUser($id, $id_kelas)) {
+					$this->session->set_flashdata('berhasil', 'Keluar Kelas');
+					redirect('home/kelas/' . $id_kelas, "refresh");
+				} else {
+					$this->session->set_flashdata('gagal', 'Keluar Kelas');
+					redirect('home/kelas/' . $id_kelas, "refresh");
+				}
+			} else {
+				$this->session->set_flashdata('gagal', 'Keluar Kelas, Anda Tidak Bergabung Dikelas Ini');
+				redirect('home/kelas/' . $id_kelas, "refresh");
 			}
 		}
 	}
@@ -106,6 +183,7 @@ class Home extends CI_Controller
 			$this->data['kelas'] = $this->All_model->getKelasWhere($id_kelas);
 			$group = $this->ion_auth_model->getGroup($id);
 			$this->data['group'] = $group;
+			$this->data['gabung'] = $this->All_model->getGabungUser($id, $id_kelas);
 			$this->data['bab'] = $this->All_model->getBabWhere($id_bab);
 			$this->form_validation->set_rules('nama_bab', 'Nama Bab', 'required');
 			$this->form_validation->set_rules('deskripsi', 'Deskripsi Kelas', 'required|max_length[100]');
@@ -116,9 +194,11 @@ class Home extends CI_Controller
 				$this->load->view('master/footer', $this->data);
 			} else {
 				if($this->All_model->ubahBabKelas($id_bab)){
-					echo "Berhasil";
+					$this->session->set_flashdata('berhasil', 'Ubah Bab Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}else{
-					echo "Gagal";
+					$this->session->set_flashdata('gagal', 'Ubah Bab Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}
 			}
 		}
@@ -135,6 +215,7 @@ class Home extends CI_Controller
 			$group = $this->ion_auth_model->getGroup($id);
 			$this->data['kelas'] = $this->All_model->getKelasWhere($id_kelas);
 			$this->data['group'] = $group;
+			$this->data['gabung'] = $this->All_model->getGabungUser($id, $id_kelas);
 			$this->form_validation->set_rules('nama_materi', 'Nama Materi', 'required');
 			$this->form_validation->set_rules('deskripsi', 'Deskripsi Materi', 'required|max_length[100]');
 			$this->form_validation->set_rules('kategori', 'Kategori Materi', 'required');
@@ -145,9 +226,11 @@ class Home extends CI_Controller
 				$this->load->view('master/footer', $this->data);
 			} else {
 				if($this->All_model->tambahMateriPembelajaran($id_bab)){
-					echo "Berhasil";
+					$this->session->set_flashdata('berhasil', 'Tambah Materi Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}else{
-					echo "Gagal";
+					$this->session->set_flashdata('gagal', 'Tambah Materi Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}
 			}
 		}
@@ -165,6 +248,7 @@ class Home extends CI_Controller
 			$this->data['materi'] = $this->All_model->getMateriWhere($id_materi);
 			$this->data['kelas'] = $this->All_model->getKelasWhere($id_kelas);
 			$this->data['group'] = $group;
+			$this->data['gabung'] = $this->All_model->getGabungUser($id, $id_kelas);
 			$this->form_validation->set_rules('nama_materi', 'Nama Materi', 'required');
 			$this->form_validation->set_rules('deskripsi', 'Deskripsi Materi', 'required|max_length[100]');
 			$this->form_validation->set_rules('kategori', 'Kategori Materi', 'required');
@@ -175,22 +259,26 @@ class Home extends CI_Controller
 				$this->load->view('master/footer', $this->data);
 			} else {
 				if ($this->All_model->ubahMateriPembelajaran($id_materi)) {
-					echo "Berhasil";
+					$this->session->set_flashdata('berhasil', 'Ubah Materi Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				} else {
-					echo "Gagal";
+					$this->session->set_flashdata('gagal', 'Ubah Materi Pembelajaran');
+					redirect('home/kelas/' . $id_kelas, "refresh");
 				}
 			}
 		}
 	}
-	public function hapus_bab($id_bab = "")
+	public function hapus_bab($id_bab = "", $id_kelas = "")
 	{
 		if (!$this->ion_auth->logged_in()) {
 			redirect('/', 'refresh');
 		} else {
 			if ($this->All_model->hapusBab($id_bab)) {
-				echo "Berhasil";
+				$this->session->set_flashdata('berhasil', 'Hapus Bab Pembelajaran');
+				redirect('home/kelas/' . $id_kelas, "refresh");
 			} else {
-				echo "Gagal";
+				$this->session->set_flashdata('gagal', 'Hapus Bab Pembelajaran');
+				redirect('home/kelas/' . $id_kelas, "refresh");
 			}
 		}
 	}
@@ -203,15 +291,17 @@ class Home extends CI_Controller
 			$this->load->view('page/ajax-data', $this->data);
 		}
 	}
-	public function hapus_materi($id_materi = "")
+	public function hapus_materi($id_materi = "", $id_kelas = "")
 	{
 		if (!$this->ion_auth->logged_in()) {
 			redirect('/', 'refresh');
 		} else {
 			if ($this->All_model->hapusMateri($id_materi)) {
-				echo "Berhasil";
+				$this->session->set_flashdata('berhasil', 'Hapus Materi Pembelajaran');
+				redirect('home/kelas/' . $id_kelas, "refresh");
 			} else {
-				echo "Gagal";
+				$this->session->set_flashdata('gagal', 'Hapus Materi Pembelajaran');
+				redirect('home/kelas/' . $id_kelas, "refresh");
 			}
 		}
 	}
@@ -237,11 +327,13 @@ class Home extends CI_Controller
 				$token = substr(str_shuffle($string), 0, 6);
 				if ($this->All_model->tambahKelasBaru($token, $group[0]['first_name'])) {
 					$cari_kelas = $this->All_model->getKelasByCode("#" . $token);
-					if ($this->All_model->tambahAnggotaKelas($cari_kelas[0]['id_kelas'], $id)) {
-						echo "Berhasil";
+					if ($this->All_model->tambahAnggotaKelas($cari_kelas[0]['id_kelas'], $id, "Pemilik")) {
+						$this->session->set_flashdata('berhasil', 'Tambah Kelas');
+						redirect('home/kelas_saya/', "refresh");
 					}
 				} else {
-					echo "Gagal";
+					$this->session->set_flashdata('gagal', 'Tambah Kelas');
+					redirect('home/kelas_saya/', "refresh");
 				}
 			}
 		}
@@ -267,9 +359,11 @@ class Home extends CI_Controller
 				$this->load->view('master/footer', $this->data);
 			} else {
 				if ($this->All_model->ubahKelasBaru($id_kelas)) {
-					echo "Berhasil";
+					$this->session->set_flashdata('berhasil', 'Ubah Kelas');
+					redirect('home/kelas_saya/', "refresh");
 				} else {
-					echo "Gagal";
+					$this->session->set_flashdata('gagal', 'Ubah Kelas');
+					redirect('home/kelas_saya/', "refresh");
 				}
 			}
 		}
@@ -280,9 +374,11 @@ class Home extends CI_Controller
 			redirect('/', 'refresh');
 		} else {
 			if ($this->All_model->hapusKelas($id_kelas)) {
-				echo "Berhasil";
+				$this->session->set_flashdata('berhasil', 'Hapus Kelas');
+				redirect('home/kelas_saya/', "refresh");
 			} else {
-				echo "Gagal";
+				$this->session->set_flashdata('gagal', 'Hapus Kelas');
+				redirect('home/kelas_saya/', "refresh");
 			}
 		}
 	}

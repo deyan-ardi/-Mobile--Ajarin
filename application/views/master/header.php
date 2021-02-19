@@ -13,12 +13,13 @@
     <title>App Ajar.In .:: <?= $title ?></title>
 
     <!-- Favicon  -->
-    <link rel="icon" href="<?= base_url() ?>/assets/img/favicon.png">
+    <link rel="icon" href="<?= base_url() ?>/assets/img/ajarin.ico">
 
     <!-- ***** All CSS Files ***** -->
 
     <!-- Style css -->
-    <link rel="stylesheet" href="<?= base_url() ?>/assets/css/style.css">
+    <link rel="stylesheet" href="<?= base_url() ?>/assets/css/main.css">
+    <link rel="stylesheet" href="<?= base_url() ?>/assets/css/dataTable.css">
 
 </head>
 <?php if ($halaman == "beranda" || $halaman == "dashboard" || $halaman == "kelas") : ?>
@@ -37,15 +38,17 @@
         <!-- ***** Header Start ***** -->
         <header class="navbar navbar-sticky navbar-expand-lg navbar-dark">
             <div class="container position-relative">
-                <a class="navbar-brand" href="index.html">
-                    <img class="navbar-brand-regular" src="<?= base_url() ?>/assets/img/logo/logo-white.png"
+                <a class="navbar-brand" href="<?= base_url() ?>home/dashboard">
+                    <img class="navbar-brand-regular" src="<?= base_url() ?>/assets/img/ajarin.png" width="50px"
                         alt="brand-logo">
-                    <img class="navbar-brand-sticky" src="<?= base_url() ?>/assets/img/logo/logo.png"
+                    <img class="navbar-brand-sticky" src="<?= base_url() ?>/assets/img/ajarin.png" width="50px"
                         alt="sticky brand-logo">
                 </a>
+
                 <button class="navbar-toggler d-lg-none" type="button" data-toggle="navbarToggler"
                     aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <!-- <span class="navbar-toggler-icon"></span> -->
+                    <i class="fas fa-user-circle fa-2x"></i>
                 </button>
 
                 <div class="navbar-inner">
@@ -65,28 +68,35 @@
                                     <li>
                                         <a class="dropdown-item" href="<?= base_url() ?>home/dashboard"> <i
                                                 class="fa fa-eye"></i>
-                                            Lihat Daftar Kelas</a>
+                                            Cari Kelas Baru</a>
                                     </li>
+                                    <?php if (!$this->ion_auth->in_group(2)) : ?>
                                     <li>
-                                        <a class="dropdown-item" href="<?=base_url()?>home/tambah_kelas"> <i
+                                        <a class="dropdown-item" href="<?= base_url() ?>home/tambah_kelas"> <i
                                                 class="fa fa-plus-circle"></i>
                                             Buat Kelas Baru</a>
+                                    </li>
+                                    <?php endif; ?>
+                                    <li>
+                                        <a class="dropdown-item" href="<?= base_url() ?>home/kelas_saya"> <i
+                                                class="fa fa-user"></i> Kelas Saya</a>
                                     </li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="javascript:;" id="navbarDropdownMenuLink"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Hai,
-                                    <?= ucwords($group[0]['first_name'])?>
+                                    <?= ucwords($group[0]['first_name']) ?>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <li>
-                                        <a class="dropdown-item" href="<?= base_url() ?>home/dashboard"> <i
+                                        <a class="dropdown-item" href="<?= base_url() ?>auth/change_password"> <i
                                                 class="fa fa-cog"></i>
-                                            Pengaturan Akun</a>
+                                            Ubah Sandi</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="index.html"> <i class="fa fa-sign-out-alt"></i>
+                                        <a class="dropdown-item" href="<?= base_url() ?>auth/logout"> <i
+                                                class="fa fa-sign-out-alt"></i>
                                             Keluar Aplikasi</a>
                                     </li>
                                 </ul>
@@ -100,3 +110,5 @@
         <?php endif; ?>
         <!--====== Scroll To Top Area End ======-->
         <div class="main">
+            <div class="berhasil" data-berhasil="<?= $this->session->flashdata('berhasil') ?>"></div>
+            <div class="gagal" data-gagal="<?= $this->session->flashdata('gagal') ?>"></div>

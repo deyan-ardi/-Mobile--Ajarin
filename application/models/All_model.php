@@ -35,6 +35,7 @@ class All_model extends CI_Model
             'nama_kelas' => $this->input->post('nama_kelas', true),
             'deskripsi' => $this->input->post('deskripsi', true),
             'created_by' => $user,
+            'id_user' => $_SESSION['user_id'],
         );
         return $this->db->insert('daftar_kelas', $query);
     }
@@ -66,10 +67,12 @@ class All_model extends CI_Model
     {
         return $this->db->like('kode_kelas', $kode)->get('daftar_kelas')->result_array();
     }
-    public function tambahAnggotaKelas($id_kelas,$id_anggota){
+    public function tambahAnggotaKelas($id_kelas, $id_anggota, $status)
+    {
         $query = array(
             'id_kelas' => $id_kelas,
             'id_user' => $id_anggota,
+            'status' => $status
         );
         return $this->db->insert('anggota_kelas', $query);
     }
@@ -131,5 +134,47 @@ class All_model extends CI_Model
     }
     public function getMateriWhere($id_materi){
         return $this->db->where('id_materi='.$id_materi)->get('daftar_materi')->result_array();
+    }
+    public function getGabungUser($id_user, $id_kelas)
+    {
+        return $this->db->where('id_kelas=' . $id_kelas)->where('id_user=' . $id_user)->get('anggota_kelas')->num_rows();
+    }
+    public function gabungKelasUser($id_kelas, $status)
+    {
+        $query = array(
+            'id_kelas' => $id_kelas,
+            'id_user' => $_SESSION['user_id'],
+            'status' => $status,
+        );
+        return $this->db->insert('anggota_kelas', $query);
+    }
+    public function keluarKelasUser($id_user, $id_kelas)
+    {
+        return $this->db->where('id_user=' . $id_user)->where('id_kelas=' . $id_kelas)->delete('anggota_kelas');
+    }
+    public function getAllAnggota($id_user)
+    {
+        return $this->db->where('id_user=' . $id_user)->get('anggota_kelas')->result_array();
+    }
+    public function getAnggotaWhere($id_user, $id_kelas)
+    {
+        return $this->db->where('id_user=' . $id_user)->where('id_kelas=' . $id_kelas)->get('anggota_kelas')->num_rows();
+    }
+    public function getAllAnggotaKelas($id_kelas)
+    {
+        $this->db->select('anggota_kelas.*, users.first_name,users.email');
+        $this->db->from('anggota_kelas');
+        $this->db->join('users', 'anggota_kelas.id_user = users.id');
+        $this->db->where('anggota_kelas.id_kelas=' . $id_kelas);
+        $this->db->order_by('status', 'DESC');
+        return $this->db->get()->result_array();
+    }
+    public function getAllKelasSaya($id_user)
+    {
+        $this->db->select('anggota_kelas.*, daftar_kelas.*');
+        $this->db->from('anggota_kelas');
+        $this->db->join('daftar_kelas', 'anggota_kelas.id_kelas = daftar_kelas.id_kelas');
+        $this->db->where('anggota_kelas.id_user=' . $id_user);
+        return $this->db->get()->result_array();
     }
 }

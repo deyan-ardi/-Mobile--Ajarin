@@ -2612,6 +2612,32 @@ img {
   margin-top: -40px;
 }
 
+[style*="--aspect-ratio"]> :first-child {
+	width: 100%;
+}
+
+[style*="--aspect-ratio"]>img {
+	height: auto;
+}
+
+@supports (--custom:property) {
+	[style*="--aspect-ratio"] {
+		position: relative;
+	}
+
+	[style*="--aspect-ratio"]::before {
+		content: "";
+		display: block;
+		padding-bottom: calc(100% / (var(--aspect-ratio)));
+	}
+
+	[style*="--aspect-ratio"]> :first-child {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+	}
+}
 @media only screen and (min-width: 576px) and (max-width: 991px) {
   .footer-area .footer-items {
     margin-bottom: 30px;

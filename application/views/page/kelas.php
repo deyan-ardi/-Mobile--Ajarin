@@ -2,44 +2,7 @@
 <section id="home" class="section welcome-area bg-overlay d-flex">
     <div class="container mt-5">
         <div class="row justify-content-center mb-4">
-            <div class="col-12 col-md-8 col-lg-12">
-                <!-- Contact Box -->
-                <div class="contact-box bg-white text-left rounded p-3 mt-lg-5 mt-3 shadow-lg">
-                    <!-- Contact Form -->
-                    <div class="text-right">
-                        <a href="#" data-toggle="modal" data-target="#modalKelas">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </a>
-                    </div>
-                    <a href="<?= base_url() ?>home/kelas/<?= $kelas[0]['id_kelas'] ?>">
-                        <h5 class="text-primary">[<?= $kelas[0]['kode_kelas'] ?>] - <?= $kelas[0]['nama_kelas'] ?></h5>
-                    </a>
-                    <p class="mt-2"><?= $kelas[0]['deskripsi'] ?></p>
-
-                    <p class="mt-4 pt-2"><?= $kelas[0]['created_by'] ?></p>
-
-                </div>
-            </div>
-            <div class="modal fade" id="modalKelas" tabindex="-2" aria-labelledby="modalKelasLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div class="modal-title" id="exampleModalLabel">Menu Item</div>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <ul>
-                                <li> <a href="<?= base_url() ?>home/tambah_bab/<?= $kelas[0]['id_kelas'] ?>"><i
-                                            class="fas fa-plus-circle"></i>
-                                        Tambah
-                                        Bab Pembelajaran</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php $this->load->view('page/header-kelas') ?>
         </div>
         <?php foreach ($bab as $dataBab) : ?>
         <div id="section-materi" class="pb-3">
@@ -48,11 +11,13 @@
                     <!-- Contact Box -->
                     <div class="contact-box bg-white text-left rounded p-3 mt-2 shadow-lg">
                         <!-- Contact Form -->
+                        <?php if (!$this->ion_auth->in_group(2) && $_SESSION['user_id'] == $kelas[0]['id_user']) : ?>
                         <div class="text-right">
                             <a href="#" data-toggle="modal" data-target="#bab<?= $dataBab['id_bab'] ?>">
                                 <i class="fas fa-ellipsis-v"></i>
                             </a>
                         </div>
+                        <?php endif ?>
                         <a href="<?= base_url() ?>home/kelas/<?= $kelas[0]['id_kelas'] ?>">
                             <h5 class="text-primary"><?= $dataBab['nama_bab'] ?></h5>
                         </a>
@@ -78,18 +43,45 @@
                                         <li class="mt-4 border-top pt-2"><a
                                                 href="<?= base_url() ?>home/ubah_bab/<?= $dataBab['id_bab'] ?>/<?= $kelas[0]['id_kelas'] ?>"><i
                                                     class=" fas fa-edit"></i> Ubah Bab Pembelajaran</a></li>
-                                        <li class="mt-4 border-top pt-2"><a
-                                                href="<?= base_url() ?>home/hapus_bab/<?= $dataBab['id_bab'] ?>"><i
-                                                    class="fas fa-trash"></i> Hapus Bab Pembelajaran<Materi>
-                                                    <a href=""></a></li>
+                                        <li class="mt-4 border-top pt-2"><a href="#" data-dismiss="modal"
+                                                data-toggle="modal" data-target="#hapusBab<?= $dataBab['id_bab'] ?>"><i
+                                                    class="fas fa-trash"></i> Hapus
+                                                Bab Pembelajaran</a></li>
                                     </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="hapusBab<?= $dataBab['id_bab'] ?>" tabindex="-2"
+                        aria-labelledby="hapusBabLabel<?= $dataBab['id_bab'] ?>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal-title" id="hapusBabLabel<?= $dataBab['id_bab'] ?>">Konfirmasi
+                                        Hapus
+                                    </div>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Apakah Anda Yakin Ingin Menghapus Bab Pembelajaran?</p>
+                                    <p>Seluruh Data Dalam Bab Pembelajaran Akan Hilang</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a
+                                        href="<?= base_url() ?>home/hapus_bab/<?= $dataBab['id_bab'] ?>/<?= $kelas[0]['id_kelas']?>"><button
+                                            type="button" class="btn btn-primary">Hapus</button></a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <?php foreach ($materi as $data_materi) : ?>
+            <?php
+                if ($gabung > 0) :
+                    foreach ($materi as $data_materi) : ?>
             <?php if ($data_materi['id_bab'] == $dataBab['id_bab']) : ?>
             <?php if ($data_materi['kategori_materi'] == 0) : ?>
             <div class="row ml-5 mb-3">
@@ -97,15 +89,28 @@
                     <!-- Contact Box -->
                     <div class="contact-box bg-white text-left rounded p-3 mt-4 shadow-lg">
                         <!-- Contact Form -->
+                        <?php if (!$this->ion_auth->in_group(2) && $_SESSION['user_id'] == $kelas[0]['id_user']) : ?>
                         <div class="text-right">
                             <a href="#" data-toggle="modal" data-target="#materi<?= $data_materi['id_materi'] ?>">
                                 <i class="fas fa-ellipsis-v"></i>
                             </a>
                         </div>
+                        <?php endif ?>
+                        <?php if ($gabung > 0) : ?>
                         <a href="<?= $data_materi['link_materi'] ?>">
                             <h5 class="text-primary">[Video] - <?= $data_materi['nama_materi'] ?></h5>
                         </a>
+                        <?php else : ?>
+                        <a href="#">
+                            <h5 class="text-primary">[Video] - <?= $data_materi['nama_materi'] ?></h5>
+                        </a>
+                        <?php endif; ?>
                         <p class="mt-4"><?= $data_materi['deskripsi_materi'] ?> </p>
+                        <div class="col-12 " style="--aspect-ratio: 16/9;">>
+                            <iframe width="100%" src="<?= $data_materi['link_materi'] ?>" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,14 +120,22 @@
                     <!-- Contact Box -->
                     <div class="contact-box bg-white text-left rounded p-3 mt-4 shadow-lg">
                         <!-- Contact Form -->
+                        <?php if (!$this->ion_auth->in_group(2) && $_SESSION['user_id'] == $kelas[0]['id_user']) : ?>
                         <div class="text-right">
                             <a href="#" data-toggle="modal" data-target="#materi<?= $data_materi['id_materi'] ?>">
                                 <i class="fas fa-ellipsis-v"></i>
                             </a>
                         </div>
+                        <?php endif ?>
+                        <?php if ($gabung > 0) : ?>
                         <a href="<?= $data_materi['link_materi'] ?>">
                             <h5 class="text-primary">[Kuis] - <?= $data_materi['nama_materi'] ?></h5>
                         </a>
+                        <?php else : ?>
+                        <a href="#">
+                            <h5 class="text-primary">[Kuis] - <?= $data_materi['nama_materi'] ?></h5>
+                        </a>
+                        <?php endif; ?>
                         <p class="mt-4"><?= $data_materi['deskripsi_materi'] ?> </p>
                     </div>
                 </div>
@@ -145,16 +158,41 @@
                                 <li><a
                                         href="<?= base_url() ?>home/ubah_materi/<?= $data_materi['id_materi'] ?>/<?= $dataBab['id_bab'] ?>/<?= $kelas[0]['id_kelas'] ?>"><i
                                             class=" fas fa-edit"></i> Ubah Materi</a></li>
-                                <li class="mt-4 border-top pt-2"><a
-                                        href="<?= base_url() ?>home/hapus_materi/<?= $data_materi['id_materi'] ?>"><i
-                                            class="fas fa-trash"></i> Hapus Materi<Materi>
-                                            <a href=""></a></li>
+                                <li class="mt-4 border-top pt-2"><a href="#" data-toggle="modal" data-dismiss="modal"
+                                        data-target="#hapusMateri<?= $data_materi['id_materi'] ?>"><i
+                                            class="fas fa-trash"></i> Hapus Materi</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- Modal -->
+            <div class="modal fade" id="hapusMateri<?= $data_materi['id_materi'] ?>" tabindex="-2"
+                aria-labelledby="hapusMateriLabel<?= $data_materi['id_materi'] ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="modal-title" id="hapusMateriLabel<?= $data_materi['id_materi'] ?>">Konfirmasi
+                                Hapus
+                            </div>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Apakah Anda Yakin Ingin Menghapus Materi Pembelajaran Ini?</p>
+                            <p>Seluruh Data Dalam Materi Pembelajaran Akan Hilang</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a
+                                href="<?= base_url() ?>home/hapus_materi/<?= $data_materi['id_materi'] ?>/<?=$kelas[0]['id_kelas']?>"><button
+                                    type="button" class="btn btn-primary">Hapus</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <?php endforeach; ?>
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
     </div>
